@@ -88,6 +88,9 @@ rappor-sim() {
     -i _tmp/$dist.csv \
     "$@"
     #-s 0  # deterministic seed
+    # TODO: Turn this on to test deterministic PRR
+    #-r simple \
+    #--oneprr \
 }
 
 # Like rappor-sim, but run it through the Python profiler.

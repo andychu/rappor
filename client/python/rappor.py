@@ -203,6 +203,24 @@ class Encoder(object):
     cohort, f_bits, mask_indices = get_rappor_masks(self.user_id, word,
                                                     params,
                                                     self.rand_funcs)
+    # Hack to test deterministic PRR.  TODO: Should users be in cohorts?
+
+    # Paper description of cohorts:
+
+    # To facilitate learning, before any data collection begins each client is
+    # randomly assigned and becomes a permanent member of one of m cohorts.
+    # Cohorts implement different sets of h hash functions for their Bloom
+    # filters, thereby reducing the chance of accidental collisions of two
+    # strings across all of them. Redundancy introduced by running m cohorts
+    # simultaneously greatly improves the false positive rate. The choice of m
+    # should be considered carefully, however. When m is too small, then
+    # collisions are still quite likely, while when m is too large, then each
+    # individual cohort provides insufficient signal due to its small sample
+    # size (approximately N=m, where N is the number of reports).  Each client
+    # must report its cohort number with every submitted report, i.e., it is
+    # not private but made private.
+
+    #cohort = 0
 
     bloom_bits_array = 0
     # Compute Bloom Filter
@@ -219,7 +237,13 @@ class Encoder(object):
     # bloom_bits_array if mask_indices = 0
 
     prr = (f_bits & mask_indices) | (bloom_bits_array & ~mask_indices)
-    #print 'prr', bin(prr)
+    import sys
+    print >>sys.stderr, 'user %4s %03s cohort %2d bloom %18s prr %18s' % (
+        self.user_id,
+        word,
+        cohort,
+        bin(bloom_bits_array),
+        bin(prr))
 
     # Compute instantaneous randomized response:
     # If PRR bit is set, output 1 with probability q
