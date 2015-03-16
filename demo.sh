@@ -23,6 +23,10 @@ readonly THIS_DIR=$(dirname $0)
 readonly REPO_ROOT=$THIS_DIR
 readonly CLIENT_DIR=$REPO_ROOT/client/python
 
+# All the Python tools need this
+export PYTHONPATH=$CLIENT_DIR
+
+
 #
 # Utility functions
 #
@@ -81,7 +85,7 @@ gen-sim-input-demo() {
 }
 
 rappor-sim() {
-  PYTHONPATH=$CLIENT_DIR time tests/rappor_sim.py "$@"
+  time tests/rappor_sim.py "$@"
 }
 
 # Do the RAPPOR transformation on our simulated input.
@@ -97,7 +101,6 @@ rappor-sim-demo-profile() {
   local dist=$1
   shift
 
-  export PYTHONPATH=$CLIENT_DIR
   # For now, just dump it to a text file.  Sort by cumulative time.
   time python -m cProfile -s cumulative \
     tests/rappor_sim.py \
@@ -144,7 +147,7 @@ hash-candidates() {
   local dist=$1
   shift
   local out=_tmp/${dist}_map.csv
-  PYTHONPATH=$CLIENT_DIR time analysis/tools/hash_candidates.py \
+  time analysis/tools/hash_candidates.py \
     _tmp/${dist}_params.csv \
     < _tmp/${dist}_candidates.txt \
     > $out
@@ -155,7 +158,7 @@ sum-bits() {
   local dist=$1
   shift
   local out=_tmp/${dist}_counts.csv
-  PYTHONPATH=$CLIENT_DIR analysis/tools/sum_bits.py \
+  analysis/tools/sum_bits.py \
     _tmp/${dist}_params.csv \
     < _tmp/${dist}_out.csv \
     > $out
