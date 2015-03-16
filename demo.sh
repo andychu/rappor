@@ -79,19 +79,20 @@ gen-sim-input() {
     -o _tmp/$dist.csv
 }
 
-# Do the RAPPOR transformation on our simulated input.
 rappor-sim() {
+  PYTHONPATH=$CLIENT_DIR time tests/rappor_sim.py "$@"
+}
+
+# Do the RAPPOR transformation on our simulated input.
+rappor-sim-dist() {
   local dist=$1
   shift
-  PYTHONPATH=$CLIENT_DIR time \
-    tests/rappor_sim.py \
-    -i _tmp/$dist.csv \
-    "$@"
+  rappor-sim -i _tmp/$dist.csv "$@"
     #-s 0  # deterministic seed
 }
 
 # Like rappor-sim, but run it through the Python profiler.
-rappor-sim-profile() {
+rappor-sim-dist-profile() {
   local dist=$1
   shift
 
@@ -188,7 +189,7 @@ run-dist() {
   gen-sim-input $dist $num_clients
 
   banner "Running RAPPOR ($dist)"
-  rappor-sim $dist
+  rappor-sim-dist $dist
 
   banner "Generating candidates ($dist)"
 
@@ -231,7 +232,7 @@ expand-html() {
 
 # Build prerequisites for the demo.
 build() {
-  # This is optional now.
+  # This is optional; the simulation will fall back to pure Python code.
   ./build.sh fastrand
 }
 
