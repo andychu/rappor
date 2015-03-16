@@ -7,6 +7,8 @@ set -o nounset
 set -o pipefail
 set -o errexit
 
+. util.sh
+
 readonly THIS_DIR=$(dirname $0)
 readonly REPO_ROOT=$THIS_DIR
 readonly CLIENT_DIR=$REPO_ROOT/client/python
@@ -76,15 +78,19 @@ _run-one-case() {
   local case_dir=$REGTEST_DIR/$test_case_id
   mkdir --verbose -p $case_dir
 
+  banner "Generating input"
+
   tests/gen_sim_input.py \
     -e \
     -n $num_clients \
     -r $num_unique_values \
-    -o $case_dir/input.csv
+    -o $case_dir/test.csv
 
   # NOTE: Have to name inputs and outputs by the test case name
   # _tmp/test/t1
   #./demo.sh gen-sim-input-demo $dist $num_clients $num_unique_values
+
+  banner "Running RAPPOR"
 
   tests/rappor_sim.py \
     --bloombits $num_bits \
@@ -93,8 +99,15 @@ _run-one-case() {
     -p $p \
     -q $q \
     -f $f \
-    -i $case_dir/input.csv \
+    -i $case_dir/test.csv \
     -o $case_dir/out.csv
+
+  banner "Summing Bits"
+
+  analysis/tools/sum_bits.py \
+    $case_dir/test_params.csv \
+    < $case_dir/out.csv \
+    > $case_dir/counts.csv
 
   tests/analyze.R -h || true
   echo $?

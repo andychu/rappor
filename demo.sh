@@ -19,32 +19,14 @@ set -o nounset
 set -o pipefail
 set -o errexit
 
+. util.sh
+
 readonly THIS_DIR=$(dirname $0)
 readonly REPO_ROOT=$THIS_DIR
 readonly CLIENT_DIR=$REPO_ROOT/client/python
 
 # All the Python tools need this
 export PYTHONPATH=$CLIENT_DIR
-
-
-#
-# Utility functions
-#
-
-banner() {
-  echo
-  echo "----- $@"
-  echo
-}
-
-log() {
-  echo 1>&2 "$@"
-}
-
-die() {
-  log "$0: $@"
-  exit 1
-}
 
 #
 # Semi-automated demos
