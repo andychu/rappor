@@ -46,12 +46,13 @@ die() {
 # Semi-automated demos
 #
 
-readonly NUM_VALUES=50  # number of actual values
+readonly NUM_UNIQUE_VALUES=50  # number of actual values
 
 # This generates the simulated input s1 .. s<n> with 3 different distributions.
 gen-sim-input() {
   local dist=$1
   local num_clients=$2
+  local num_unique_values=${3:-$NUM_UNIQUE_VALUES}
 
   local flag=''
   case $dist in
@@ -75,7 +76,7 @@ gen-sim-input() {
   # 50 different client values are easier to plot (default is 100)
   time tests/gen_sim_input.py $flag \
     -n $num_clients \
-    -r $NUM_VALUES \
+    -r $num_unique_values \
     -o _tmp/$dist.csv
 }
 
@@ -109,10 +110,13 @@ rappor-sim-dist-profile() {
 # estimated at 0.
 more-candidates() {
   local num_additional=$1
+  local num_unique_values=${2:-$NUM_UNIQUE_VALUES}
   # e.g. if num_additional 20, show v51-v70
 
-  seq $(expr $NUM_VALUES + 1) $(expr $NUM_VALUES + $num_additional) \
-    | awk '{print "v" $1}'
+  local begin=$(expr $num_unique_values + 1)
+  local end=$(expr $num_unique_values + $num_additional)
+
+  seq $begin $end | awk '{print "v" $1}'
 }
 
 # Args:
