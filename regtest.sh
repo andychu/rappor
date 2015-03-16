@@ -21,7 +21,7 @@ run-all() {
   #
   # -n3 has to match the number of arguments in the spec.
   tests/rappor_regtest.py \
-    | xargs -n10 -P10 --verbose -- $0 _run-one-case
+    | xargs -n12 -P10 --verbose -- $0 _run-one-case
 
   # After these are done in parallel
   #
@@ -44,12 +44,17 @@ _run-one-case() {
   local q=$9
   local f=${10}  # need curly braces to get 10th arg
 
+  local num_additional=${11}
+  local to_remove=${12}
+
   # ...
 
   echo "ID $test_case_id"
   echo "GOT $@"
 
   echo "P Q F $p $q $f"
+
+  echo "$num_additional $to_remove"
 
   #tests/gen_sim_input.py -h || true
 

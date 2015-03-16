@@ -7,6 +7,8 @@ import sys
 
 # For gen_sim_input.py
 INPUT_PARAMS = {
+    # distribution, num clients, num unique values
+    # TODO: get rid of magic 7
     'e1': ('exp', 10000, 100),
     'e2': ('exp', 100000, 100),
     }
@@ -17,6 +19,15 @@ RAPPOR_PARAMS = {
     'r1': (16, 2, 64, 0.5, 0.75, 0.5),
     }
 
+MAP_PARAMS = {
+    # Number of fake candidates to add.  Candidate strings to remove from the
+    # map.
+    # The number of maps.
+    'm1': (10, []),
+    'm2': (10, ['v1', 'v2']),
+    'm3': (50, ['v1', 'v2']),
+    }
+
 # Pairs of (input params, rappor params)
 
 # should we have a name?
@@ -24,28 +35,12 @@ RAPPOR_PARAMS = {
 
 TEST_CASES = {
     # same parameters as the demo
-    'demo': ('e1', 'r1'),
-    'chrome': ('e2', 'r1'),
+    'demo': ('e1', 'r1', 'm1'),
+    'chrome': ('e2', 'r1', 'm2'),
     }
 
 
 def main(argv):
-  # Construct test cases, then call
-  # Put in env?
-  #
-  #
-  # ./demo.sh run-all?
-  # Should it be on stdin?
-
-  # Should this just print the test spec to stdout?
-
-
-  # Every line is an invocation of
-
-  # ./demo.sh run-test-case "$@"
-
-  # --out
-
   # analyze.R should write a CSV row in each dir
   #
   # _tmp/t1/metrics.csv
@@ -57,16 +52,24 @@ def main(argv):
   # - Reuse the same map file - rappor library can cache it
 
   rows = []
-  for test_case, (input_name, rappor_name) in TEST_CASES.iteritems():
+  for test_case, (input_name, rappor_name, map_name) in TEST_CASES.iteritems():
     input_params = INPUT_PARAMS[input_name]
     rappor_params = RAPPOR_PARAMS[rappor_name]
+    map_params = MAP_PARAMS[map_name]
     #print input_params, rappor_params
-    row = tuple([test_case,]) + input_params + rappor_params
+    row = tuple([test_case,]) + input_params + rappor_params + map_params
     rows.append(row)
 
   for row in rows:
     for cell in row:
-      print cell,  # print it with a space after it
+      if isinstance(cell, list):
+        if cell:
+          cell_str = '|'.join(cell)
+        else:
+          cell_str = '-'  # we don't want an empty string
+      else:
+        cell_str = cell
+      print cell_str,  # print it with a space after it
     print  # new line after row
 
 
