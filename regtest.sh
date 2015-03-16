@@ -32,6 +32,8 @@ run-all() {
   tests/rappor_regtest.py \
     | xargs -n 12 -P $NUM_PROCS --verbose -- $0 $func
 
+  which tree >/dev/null && tree $REGTEST_DIR
+
   # After these are done in parallel
   #
   # Output summary
@@ -102,10 +104,19 @@ _run-one-case() {
     -i $case_dir/test.csv \
     -o $case_dir/out.csv
 
+  banner "Writing candidates"
+
   # Reuse demo.sh function
   ./demo.sh print-candidates \
     $case_dir/test_true_inputs.txt $num_additional "$to_remove" \
     > $case_dir/test_candidates.txt
+
+  banner "Hashing candidates"
+
+  analysis/tools/hash_candidates.py \
+    $case_dir/test_params.csv \
+    < $case_dir/test_candidates.txt \
+    > $case_dir/test_map.csv
 
   banner "Summing Bits"
 
