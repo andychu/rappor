@@ -37,7 +37,7 @@ MAP_PARAMS = {
 TEST_CASES = {
     # same parameters as the demo
     'demo': ('e1', 'r1', 'm1'),
-    'chrome': ('e2', 'r1', 'm2'),
+    'chrome': ('e1', 'r1', 'm2'),
     }
 
 #

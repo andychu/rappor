@@ -105,17 +105,13 @@ _run-one-case() {
   analysis/tools/sum_bits.py \
     $case_dir/test_params.csv \
     < $case_dir/out.csv \
-    > $case_dir/counts.csv
+    > $case_dir/test_counts.csv
 
-  tests/analyze.R -h || true
-  echo $?
+  local out_dir=$REGTEST_DIR/${test_case_id}_report
+  mkdir --verbose -p $out_dir
 
-  return
-
-  # NOTE: This returns a prefix
-
-  # reads input from params dir
-  tests/analyze.R _tmp/$test_case_id _tmp/$test_case_id
+  # Input prefix, output dir
+  tests/analyze.R -t "Test case: $test_case_id" $case_dir/test $out_dir
 }
 
 # Like _run-once-case, but log to a file.
@@ -129,7 +125,8 @@ _run-one-case-logged() {
   _run-one-case "$@" >$case_dir/log.txt 2>&1
 }
 
-h() {
+show-help() {
+  tests/gen_sim_input.py || true
   tests/rappor_sim.py -h || true
 }
 
