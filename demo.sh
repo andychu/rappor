@@ -110,16 +110,16 @@ more-candidates() {
 #       list.  Passed to egrep -v, e.g. v1|v2|v3.
 print-candidates() {
   local true_inputs=$1
-  # Assume that we know the set of true inputs EXACTLY
-  #cp _tmp/${dist}_true_inputs.txt _tmp/${dist}_candidates.txt
-  #
   local num_additional=$2
-  local to_remove="$3"  # true values we omitted from the candidates list.
+  # Regex of true values to omit from the candidates list, or the string 'NONE'
+  # if none should be.  (Our values look like 'v1', 'v2', etc. so there isn't
+  # any ambiguity.)
+  local to_remove=$3
 
-  if test -n "$to_remove"; then
-    egrep -v "$to_remove" $true_inputs  # remove some true inputs
-  else
+  if test $to_remove = NONE; then
     cat $true_inputs  # include all true inputs
+  else
+    egrep -v $to_remove $true_inputs  # remove some true inputs
   fi
   more-candidates $num_additional
 }
@@ -171,7 +171,7 @@ run-dist() {
   # TODO: parameterize output dirs by num_clients
   local num_clients=${2:-100000}
   local num_additional=${3:-10}  # number of additional candidates
-  local to_remove=${4:-}  # empty by default, set to 'v1|v2' to remove
+  local to_remove=${4:-NONE}  # empty by default, set to 'v1|v2' to remove
 
   banner "Generating simulated input data ($dist)"
   gen-sim-input-demo $dist $num_clients
@@ -183,7 +183,7 @@ run-dist() {
 
   # Keep all candidates
   print-candidates \
-    _tmp/${dist}_true_inputs.txt $num_additional "$to_remove" \
+    _tmp/${dist}_true_inputs.txt $num_additional $to_remove \
     > _tmp/${dist}_candidates.txt
 
   banner "Hashing Candidates ($dist)"

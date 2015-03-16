@@ -66,7 +66,7 @@ def main(argv):
         if cell:
           cell_str = '|'.join(cell)
         else:
-          cell_str = '-'  # we don't want an empty string
+          cell_str = 'NONE'  # we don't want an empty string
       else:
         cell_str = cell
       print cell_str,  # print it with a space after it

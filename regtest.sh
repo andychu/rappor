@@ -102,6 +102,11 @@ _run-one-case() {
     -i $case_dir/test.csv \
     -o $case_dir/out.csv
 
+  # Reuse demo.sh function
+  ./demo.sh print-candidates \
+    $case_dir/test_true_inputs.txt $num_additional "$to_remove" \
+    > $case_dir/test_candidates.txt
+
   banner "Summing Bits"
 
   analysis/tools/sum_bits.py \
