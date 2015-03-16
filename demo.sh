@@ -109,18 +109,17 @@ more-candidates() {
 #   to_remove: list of values which we "forgot" to include in the candidates
 #       list.  Passed to egrep -v, e.g. v1|v2|v3.
 print-candidates() {
-  local dist=$1
+  local true_inputs=$1
   # Assume that we know the set of true inputs EXACTLY
   #cp _tmp/${dist}_true_inputs.txt _tmp/${dist}_candidates.txt
   #
   local num_additional=$2
   local to_remove="$3"  # true values we omitted from the candidates list.
 
-  local in=_tmp/${dist}_true_inputs.txt
   if test -n "$to_remove"; then
-    egrep -v "$to_remove" $in  # remove some true inputs
+    egrep -v "$to_remove" $true_inputs  # remove some true inputs
   else
-    cat $in  # include all true inputs
+    cat $true_inputs  # include all true inputs
   fi
   more-candidates $num_additional
 }
@@ -183,7 +182,9 @@ run-dist() {
   banner "Generating candidates ($dist)"
 
   # Keep all candidates
-  print-candidates $dist $num_additional "$to_remove" > _tmp/${dist}_candidates.txt
+  print-candidates \
+    _tmp/${dist}_true_inputs.txt $num_additional "$to_remove" \
+    > _tmp/${dist}_candidates.txt
 
   banner "Hashing Candidates ($dist)"
   hash-candidates $dist
