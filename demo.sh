@@ -284,9 +284,4 @@ ok-case() {
   run-dist exp 10000 10 'v1|v2'
 }
 
-#
-# Test harness
-#
-
-
 "$@"
