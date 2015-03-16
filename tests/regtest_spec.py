@@ -5,6 +5,10 @@ rappor_regtest.py
 
 import sys
 
+#
+# TEST CONFIGURATION
+#
+
 # For gen_sim_input.py
 INPUT_PARAMS = {
     # distribution, num clients, num unique values
@@ -19,6 +23,7 @@ RAPPOR_PARAMS = {
     'r1': (16, 2, 64, 0.5, 0.75, 0.5),
     }
 
+# For deriving candidates from true inputs.
 MAP_PARAMS = {
     # Number of fake candidates to add.  Candidate strings to remove from the
     # map.
@@ -28,16 +33,16 @@ MAP_PARAMS = {
     'm3': (50, ['v1', 'v2']),
     }
 
-# Pairs of (input params, rappor params)
-
-# should we have a name?
-# or just identify by T1 .. Tn
-
+# test case name -> (input params name, RAPPOR params name, map params name)
 TEST_CASES = {
     # same parameters as the demo
     'demo': ('e1', 'r1', 'm1'),
     'chrome': ('e2', 'r1', 'm2'),
     }
+
+#
+# END TEST CONFIGURATION
+#
 
 
 def main(argv):

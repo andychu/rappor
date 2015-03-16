@@ -29,7 +29,7 @@ run-all() {
   #local func=_run-one-case-logged
   local func=_run-one-case  # parallel process output mixed on the console
 
-  tests/rappor_regtest.py \
+  tests/regtest_spec.py \
     | xargs -n 12 -P $NUM_PROCS --verbose -- $0 $func
 
   which tree >/dev/null && tree $REGTEST_DIR
