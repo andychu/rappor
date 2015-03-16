@@ -10,23 +10,36 @@ set -o errexit
 readonly THIS_DIR=$(dirname $0)
 readonly REPO_ROOT=$THIS_DIR
 readonly CLIENT_DIR=$REPO_ROOT/client/python
+readonly REGTEST_DIR=_tmp/regtest
 
 # All the Python tools need this
 export PYTHONPATH=$CLIENT_DIR
 
+# TODO: Get num cpus
+readonly NUM_PROCS=12
 
 run-all() {
-  mkdir --verbose -p _tmp/regtest
+  mkdir --verbose -p $REGTEST_DIR
   # Print the spec
   #
   # -n3 has to match the number of arguments in the spec.
   tests/rappor_regtest.py \
-    | xargs -n12 -P10 --verbose -- $0 _run-one-case
+    | xargs -n 12 -P $NUM_PROCS --verbose -- $0 _run-one-case-logged
 
   # After these are done in parallel
   #
   # Output summary
   # Then cat _tmp/regtest/t*/metrics.csv
+}
+
+_run-one-case-logged() {
+  local test_case_id=$1
+
+  local case_dir=$REGTEST_DIR/$test_case_id
+  mkdir --verbose -p $case_dir
+
+  echo "Logging to $case_dir/stdout.log"
+  _run-one-case "$@" >$case_dir/stdout.log 2>$case_dir/stderr.log
 }
 
 # Private, don't rely on the arguments
@@ -56,11 +69,18 @@ _run-one-case() {
 
   echo "$num_additional $to_remove"
 
-  #tests/gen_sim_input.py -h || true
+  local case_dir=$REGTEST_DIR/$test_case_id
+  mkdir --verbose -p $case_dir
+
+  tests/gen_sim_input.py \
+    -e \
+    -n $num_clients \
+    -r $num_unique_values \
+    -o $case_dir/input.csv
 
   # NOTE: Have to name inputs and outputs by the test case name
   # _tmp/test/t1
-  ./demo.sh gen-sim-input-demo $dist $num_clients $num_unique_values
+  #./demo.sh gen-sim-input-demo $dist $num_clients $num_unique_values
   return
 
   tests/rappor_sim.py -h || true
