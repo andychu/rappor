@@ -23,8 +23,12 @@ run-all() {
   # Print the spec
   #
   # -n3 has to match the number of arguments in the spec.
+
+  #local func=_run-one-case-logged
+  local func=_run-one-case  # everything mixed in parallel
+
   tests/rappor_regtest.py \
-    | xargs -n 12 -P $NUM_PROCS --verbose -- $0 _run-one-case-logged
+    | xargs -n 12 -P $NUM_PROCS --verbose -- $0 $func
 
   # After these are done in parallel
   #
@@ -81,15 +85,30 @@ _run-one-case() {
   # NOTE: Have to name inputs and outputs by the test case name
   # _tmp/test/t1
   #./demo.sh gen-sim-input-demo $dist $num_clients $num_unique_values
-  return
 
-  tests/rappor_sim.py -h || true
+  tests/rappor_sim.py \
+    --bloombits $num_bits \
+    --hashes $num_hashes \
+    --cohorts $num_cohorts \
+    -p $p \
+    -q $q \
+    -f $f \
+    -i $case_dir/input.csv \
+    -o $case_dir/out.csv
 
   tests/analyze.R -h || true
   echo $?
 
+  return
+
+  # NOTE: This returns a prefix
+
   # reads input from params dir
   tests/analyze.R _tmp/$test_case_id _tmp/$test_case_id
+}
+
+h() {
+  tests/rappor_sim.py -h || true
 }
 
 "$@"
