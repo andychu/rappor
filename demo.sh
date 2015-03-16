@@ -49,7 +49,7 @@ die() {
 readonly NUM_UNIQUE_VALUES=50  # number of actual values
 
 # This generates the simulated input s1 .. s<n> with 3 different distributions.
-gen-sim-input() {
+gen-sim-input-demo() {
   local dist=$1
   local num_clients=$2
   local num_unique_values=${3:-$NUM_UNIQUE_VALUES}
@@ -85,7 +85,7 @@ rappor-sim() {
 }
 
 # Do the RAPPOR transformation on our simulated input.
-rappor-sim-dist() {
+rappor-sim-demo() {
   local dist=$1
   shift
   rappor-sim -i _tmp/$dist.csv "$@"
@@ -93,7 +93,7 @@ rappor-sim-dist() {
 }
 
 # Like rappor-sim, but run it through the Python profiler.
-rappor-sim-dist-profile() {
+rappor-sim-demo-profile() {
   local dist=$1
   shift
 
@@ -190,10 +190,10 @@ run-dist() {
   local to_remove=${4:-}  # empty by default, set to 'v1|v2' to remove
 
   banner "Generating simulated input data ($dist)"
-  gen-sim-input $dist $num_clients
+  gen-sim-input-demo $dist $num_clients
 
   banner "Running RAPPOR ($dist)"
-  rappor-sim-dist $dist
+  rappor-sim-demo $dist
 
   banner "Generating candidates ($dist)"
 
@@ -280,5 +280,10 @@ pcls-test() {
 ok-case() {
   run-dist exp 10000 10 'v1|v2'
 }
+
+#
+# Test harness
+#
+
 
 "$@"
