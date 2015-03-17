@@ -3,24 +3,16 @@
 make_summary.py
 """
 
+import os
 import sys
 
 
 def main(argv):
-  pairs = argv[1:]
-  pairs.sort()
-  # Now it looks like t1/spec.txt, t1_report/metrics.csv, t2/spec.txt,
-  # t2_report/metrics.csv, ...
-  assert len(pairs) % 2 == 0
-
-  for i in xrange(len(pairs) / 2):
-    spec = pairs[i*2]
-    metrics = pairs[i*2 + 1]
-
-    with open(spec) as s:
-      with open(metrics) as m:
-        print s.read()
-        print m.read()
+  base_dir = argv[1]
+  path = os.path.join(base_dir, 'test-cases.txt')
+  with open(path) as f:
+    for line in f:
+      print line
 
 
 if __name__ == '__main__':

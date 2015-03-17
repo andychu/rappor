@@ -139,11 +139,6 @@ show-help() {
   tests/rappor_sim.py -h || true
 }
 
-make-summary() {
-  # Use a simple Python script to merge the simulation params and metrics.
-  tests/make_summary.py $REGTEST_DIR/*/spec.txt $REGTEST_DIR/*_report/metrics.csv
-}
-
 run-all() {
   # Limit it to this number of test cases.  By default we run all of them.
   local max_cases=${1:-1000000}
@@ -158,13 +153,17 @@ run-all() {
 
   log "Using $NUM_PROCS parallel processes"
 
-  tests/regtest_spec.py \
-    | head -n $max_cases \
+  local spec_list=$REGTEST_DIR/spec-list.txt
+  tests/regtest_spec.py > $spec_list
+
+  cut -d ' ' -f 1 $spec_list > $REGTEST_DIR/test-cases.txt
+
+  head -n $max_cases $spec_list \
     | xargs -n $NUM_SPEC_COLS -P $NUM_PROCS --verbose -- $0 $func
 
   which tree >/dev/null && tree $REGTEST_DIR
 
-  make-summary
+  tests/make_summary.py $REGTEST_DIR
 }
 
 "$@"
