@@ -68,7 +68,7 @@ _run-one-case() {
     -e \
     -n $num_clients \
     -r $num_unique_values \
-    -o $case_dir/test.csv
+    -o $case_dir/case.csv
 
   # NOTE: Have to name inputs and outputs by the test case name
   # _tmp/test/t1
@@ -83,35 +83,35 @@ _run-one-case() {
     -p $p \
     -q $q \
     -f $f \
-    -i $case_dir/test.csv \
+    -i $case_dir/case.csv \
     -o $case_dir/out.csv
 
   banner "Deriving candidates from true inputs"
 
   # Reuse demo.sh function
   ./demo.sh print-candidates \
-    $case_dir/test_true_inputs.txt $num_additional "$to_remove" \
-    > $case_dir/test_candidates.txt
+    $case_dir/case_true_inputs.txt $num_additional "$to_remove" \
+    > $case_dir/case_candidates.txt
 
   banner "Hashing candidates"
 
   analysis/tools/hash_candidates.py \
-    $case_dir/test_params.csv \
-    < $case_dir/test_candidates.txt \
-    > $case_dir/test_map.csv
+    $case_dir/case_params.csv \
+    < $case_dir/case_candidates.txt \
+    > $case_dir/case_map.csv
 
   banner "Summing Bits"
 
   analysis/tools/sum_bits.py \
-    $case_dir/test_params.csv \
+    $case_dir/case_params.csv \
     < $case_dir/out.csv \
-    > $case_dir/test_counts.csv
+    > $case_dir/case_counts.csv
 
   local out_dir=$REGTEST_DIR/${test_case_id}_report
   mkdir --verbose -p $out_dir
 
   # Input prefix, output dir
-  tests/analyze.R -t "Test case: $test_case_id" $case_dir/test $out_dir
+  tests/analyze.R -t "Test case: $test_case_id" "$case_dir/case" $out_dir
 }
 
 # Like _run-once-case, but log to a file.
