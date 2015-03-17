@@ -79,6 +79,7 @@ LoadInputs <- function(prefix, ctx) {
 
   ctx$rappor <- rappor
   ctx$actual <- read.csv(h)
+  ctx$params <- params  # so we can write it out later
 }
 
 # Prepare input data to be plotted
@@ -175,10 +176,14 @@ WritePlot <- function(p, outdir, width = 800, height = 600) {
   Log('Wrote %s', filename)
 }
 
-WriteMetrics <- function(metrics, outdir) {
+WriteSummary <- function(params, metrics, outdir) {
   filename <- file.path(outdir, 'metrics.csv')
-  # TODO: Write the original params too
-  write.csv(metrics, file = filename, row.names = FALSE)
+
+  # These two data frames have 1 row and no common columns, so we can merge to
+  # concatenate.
+  summary <- merge(params, metrics)
+
+  write.csv(summary, file = filename, row.names = FALSE)
   Log('Wrote %s', filename)
 }
 
@@ -201,7 +206,7 @@ main <- function(parsed) {
   d <- ProcessAll(ctx)
   p <- PlotAll(d$plot_data, options$title)
 
-  WriteMetrics(d$metrics, output_dir)
+  WriteSummary(ctx$params, d$metrics, output_dir)
   WritePlot(p, output_dir)
 }
 
