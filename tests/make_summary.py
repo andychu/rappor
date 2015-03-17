@@ -6,6 +6,21 @@ make_summary.py
 import os
 import sys
 
+# See matching header in tests/regtest.html.
+
+ROW = """\
+<tr>
+  <td>
+    %(name)s
+  <td>
+  <td>
+    %(spec)s
+  <td>
+  <td>
+    %(metrics)s
+  <td>
+</tr>
+"""
 
 def main(argv):
   base_dir = argv[1]
@@ -21,15 +36,22 @@ def main(argv):
     with open(spec) as s:
       spec_row = s.readline().split()
 
-    print spec_row
+    #print spec_row
 
     metrics = os.path.join(base_dir, case + '_report', 'metrics.csv')
     with open(metrics) as m:
       header = m.readline()
-      print header
+      #print header
       metrics_row = m.readline().split(',')
 
-    print metrics_row
+    #print metrics_row
+
+    data = {
+        'name': spec_row[0],
+        'spec': ' '.join(spec_row), 
+        'metrics': ' '.join(metrics_row),
+        }
+    print ROW % data
 
 
 if __name__ == '__main__':
