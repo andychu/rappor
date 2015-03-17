@@ -139,13 +139,13 @@ ProcessAll = function(ctx) {
   str(false_neg)
 
   metrics <- list(
-      l1 = l1,
-      sum_estimate = sum(rappor$estimate),
-      sum_proportion = sum(rappor$proportion),
+      num_actual = nrow(actual),  # data frames
+      num_rappor = nrow(rappor),
       num_false_pos = nrow(false_pos),
       num_false_neg = nrow(false_neg),
-      num_actual = nrow(actual),  # data frames
-      num_rappor = nrow(rappor)
+      l1 = l1,
+      sum_estimate = sum(rappor$estimate),
+      sum_proportion = sum(rappor$proportion)
       )
 
   Log("Metrics:")
@@ -176,14 +176,9 @@ WritePlot <- function(p, outdir, width = 800, height = 600) {
   Log('Wrote %s', filename)
 }
 
-WriteSummary <- function(params, metrics, outdir) {
+WriteSummary <- function(metrics, outdir) {
   filename <- file.path(outdir, 'metrics.csv')
-
-  # These two data frames have 1 row and no common columns, so we can merge to
-  # concatenate.
-  summary <- merge(params, metrics)
-
-  write.csv(summary, file = filename, row.names = FALSE)
+  write.csv(metrics, file = filename, row.names = FALSE)
   Log('Wrote %s', filename)
 }
 
@@ -206,7 +201,7 @@ main <- function(parsed) {
   d <- ProcessAll(ctx)
   p <- PlotAll(d$plot_data, options$title)
 
-  WriteSummary(ctx$params, d$metrics, output_dir)
+  WriteSummary(d$metrics, output_dir)
   WritePlot(p, output_dir)
 }
 

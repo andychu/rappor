@@ -61,6 +61,7 @@ run-all() {
 
   # Now
   head $REGTEST_DIR/*_report/metrics.csv
+  head $REGTEST_DIR/*/case_params.csv
 }
 
 # Run a single test case, specified by a line of the test spec.
@@ -88,6 +89,10 @@ _run-one-case() {
 
   local case_dir=$REGTEST_DIR/$test_case_id
   mkdir --verbose -p $case_dir
+
+  banner "Write spec"
+  # The arguments are the test case spec
+  echo "$@" > $case_dir/spec.txt
 
   banner "Generating input"
 
