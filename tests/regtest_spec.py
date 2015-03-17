@@ -23,15 +23,16 @@ INPUT_PARAMS = {
 
 # For rappor_sim.py
 RAPPOR_PARAMS = {
-    # k,h,m,p,q,f
+    # 'k, h, m, p, q, f' as in params file.
     'r1': (16, 2, 64, 0.5, 0.75, 0.5),
     }
 
 # For deriving candidates from true inputs.
 MAP_PARAMS = {
-    # Number of fake candidates to add.  Candidate strings to remove from the
-    # map.
-    # The number of maps.
+    # 1. Number of extra candidates to add.
+    # 2. Candidate strings to remove from the map.  This FORCES false
+    # negatives, e.g. for common strings, since a string has to be in the map
+    # for RAPPOR to choose it.
     'm1': (10, []),
     'm2': (10, ['v1', 'v2']),
     'm3': (50, ['v1', 'v2']),

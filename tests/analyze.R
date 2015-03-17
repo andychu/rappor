@@ -107,8 +107,8 @@ ProcessAll = function(ctx) {
   
   # L1 distance between actual and rappor distributions
   # Outer join
-  merged <- merge(r[,c('index', 'proportion')],
-                  a[,c('index', 'proportion')],
+  merged <- merge(r[, c('index', 'proportion')],
+                  a[, c('index', 'proportion')],
                   by='index', all=TRUE)
   # NA values set to 0.0
   merged[is.na(merged)] <- 0
@@ -125,8 +125,6 @@ ProcessAll = function(ctx) {
     r <- rbind(r, z)
   }
   if (length(not_in_actual) > 0) {
-    # More strings detected in RAPPOR than present in actual distr
-    # These strings must be reported as false positives in metrics$fp
     z <- data.frame(index = StringToInt(not_in_actual),
                     proportion = 0.0,
                     dist = "actual")
@@ -134,8 +132,7 @@ ProcessAll = function(ctx) {
   }
   
   # Choose false positive strings and their proportion from rappor estimates
-  fp <- rappor[rappor$strings %in% not_in_actual,
-                      c('strings', 'proportion')]
+  fp <- rappor[rappor$strings %in% not_in_actual, c('strings', 'proportion')]
   metrics <- list(l1 = l1, fp = fp)
   Log("Metrics:")
   print(str(metrics))
