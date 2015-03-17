@@ -35,6 +35,12 @@ readonly NUM_SPEC_COLS=${NUM_PROCS:-13}
 # TODO: Get num cpus
 readonly NUM_PROCS=${NUM_PROCS:-12}
 
+
+make-summary() {
+  # Use a simple Python script to merge the simulation params and metrics.
+  tests/make_summary.py $REGTEST_DIR/*/spec.txt $REGTEST_DIR/*_report/metrics.csv
+}
+
 run-all() {
   # Limit it to this number of test cases.  By default we run all of them.
   local max_cases=${1:-1000000}
@@ -53,9 +59,7 @@ run-all() {
 
   which tree >/dev/null && tree $REGTEST_DIR
 
-  # TODO: merge spec and metrics.  I guess use a simple Python script.
-  head $REGTEST_DIR/*/spec.txt
-  head $REGTEST_DIR/*_report/metrics.csv
+  make-summary
 }
 
 # Run a single test case, specified by a line of the test spec.
@@ -87,7 +91,8 @@ _run-one-case() {
   local case_dir=$REGTEST_DIR/$test_case_id
   mkdir --verbose -p $case_dir
 
-  banner "Write spec"
+  banner "Saving spec"
+
   # The arguments are the test case spec
   echo "$@" > $case_dir/spec.txt
 
@@ -104,7 +109,7 @@ _run-one-case() {
   # _tmp/test/t1
   #./demo.sh gen-sim-input-demo $dist $num_clients $num_unique_values
 
-  banner "Running RAPPOR"
+  banner "Running RAPPOR client"
 
   tests/rappor_sim.py \
     --bloombits $num_bits \
@@ -116,21 +121,21 @@ _run-one-case() {
     -i $case_dir/case.csv \
     -o $case_dir/out.csv
 
-  banner "Deriving candidates from true inputs"
+  banner "Constructing candidates"
 
   # Reuse demo.sh function
   ./demo.sh print-candidates \
     $case_dir/case_true_inputs.txt $num_additional "$to_remove" \
     > $case_dir/case_candidates.txt
 
-  banner "Hashing candidates"
+  banner "Hashing candidates to get 'map'"
 
   analysis/tools/hash_candidates.py \
     $case_dir/case_params.csv \
     < $case_dir/case_candidates.txt \
     > $case_dir/case_map.csv
 
-  banner "Summing Bits"
+  banner "Summing bits to get 'counts'"
 
   analysis/tools/sum_bits.py \
     $case_dir/case_params.csv \
