@@ -25,8 +25,11 @@ def main(argv):
 
     metrics = os.path.join(base_dir, case + '_report', 'metrics.csv')
     with open(metrics) as m:
-      print m.read()
+      header = m.readline()
+      print header
+      metrics_row = m.readline().split(',')
 
+    print metrics_row
 
 
 if __name__ == '__main__':
