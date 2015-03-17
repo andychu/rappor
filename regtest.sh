@@ -36,32 +36,6 @@ readonly NUM_SPEC_COLS=${NUM_PROCS:-13}
 readonly NUM_PROCS=${NUM_PROCS:-12}
 
 
-make-summary() {
-  # Use a simple Python script to merge the simulation params and metrics.
-  tests/make_summary.py $REGTEST_DIR/*/spec.txt $REGTEST_DIR/*_report/metrics.csv
-}
-
-run-all() {
-  # Limit it to this number of test cases.  By default we run all of them.
-  local max_cases=${1:-1000000}
-
-  mkdir --verbose -p $REGTEST_DIR
-  # Print the spec
-  #
-  # -n3 has to match the number of arguments in the spec.
-
-  #local func=_run-one-case-logged
-  local func=_run-one-case  # parallel process output mixed on the console
-
-  tests/regtest_spec.py \
-    | head -n $max_cases \
-    | xargs -n $NUM_SPEC_COLS -P $NUM_PROCS --verbose -- $0 $func
-
-  which tree >/dev/null && tree $REGTEST_DIR
-
-  make-summary
-}
-
 # Run a single test case, specified by a line of the test spec.
 # This is a helper function for 'run-all'.
 
@@ -163,6 +137,34 @@ _run-one-case-logged() {
 show-help() {
   tests/gen_sim_input.py || true
   tests/rappor_sim.py -h || true
+}
+
+make-summary() {
+  # Use a simple Python script to merge the simulation params and metrics.
+  tests/make_summary.py $REGTEST_DIR/*/spec.txt $REGTEST_DIR/*_report/metrics.csv
+}
+
+run-all() {
+  # Limit it to this number of test cases.  By default we run all of them.
+  local max_cases=${1:-1000000}
+
+  mkdir --verbose -p $REGTEST_DIR
+  # Print the spec
+  #
+  # -n3 has to match the number of arguments in the spec.
+
+  #local func=_run-one-case-logged
+  local func=_run-one-case  # parallel process output mixed on the console
+
+  log "Using $NUM_PROCS parallel processes"
+
+  tests/regtest_spec.py \
+    | head -n $max_cases \
+    | xargs -n $NUM_SPEC_COLS -P $NUM_PROCS --verbose -- $0 $func
+
+  which tree >/dev/null && tree $REGTEST_DIR
+
+  make-summary
 }
 
 "$@"
