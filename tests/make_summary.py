@@ -14,7 +14,13 @@ ROW = """\
     %(name)s
   </td>
   <td>
-    %(spec)s
+    %(input)s
+  </td>
+  <td>
+    %(rappor)s
+  </td>
+  <td>
+    %(map)s
   </td>
   <td>
     %(metrics)s
@@ -46,9 +52,15 @@ def main(argv):
 
     #print metrics_row
 
+    def Piece(s, begin, end):
+      return ' '.join(s[begin : end])
+
     data = {
+        # See tests/regtest_spec.py for the definition of the spec row
         'name': spec_row[0],
-        'spec': ' '.join(spec_row), 
+        'input': Piece(spec_row, 1, 5),
+        'rappor': Piece(spec_row, 5, 11),
+        'map': Piece(spec_row, 11, 13),
         'metrics': ' '.join(metrics_row),
         }
     print ROW % data
