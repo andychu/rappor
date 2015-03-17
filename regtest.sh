@@ -8,21 +8,13 @@
 # Examples:
 #
 # $ export NUM_PROCS=20  # 12 by default
-# $ ./regtest.sh run-all  # run all reg tests
+# $ ./regtest.sh run-all  # run all reg tests with 20 parallel processes
 #
-# There will be CSV output.
+# At the end, it will print a CSV and HTML summary you can inspect.
 
-# Flow:
-#
-# analyze.R should write a CSV row in each dir
-#
-# _tmp/t1/metrics.csv
-#
-# And then you concatenate them all
-
-# TODO:
-# - Reuse the same sim input -- come up with naming scheme
-# - Reuse the same map file -- ditto, rappor library can cache it
+# Future speedups:
+# - Reuse the same input -- come up with naming scheme based on params
+# - Reuse the same maps -- ditto, rappor library can cache it
 
 set -o nounset
 set -o pipefail
@@ -37,6 +29,8 @@ readonly REGTEST_DIR=_tmp/regtest
 
 # All the Python tools need this
 export PYTHONPATH=$CLIENT_DIR
+
+readonly NUM_SPEC_COLS=${NUM_PROCS:-13}
 
 # TODO: Get num cpus
 readonly NUM_PROCS=${NUM_PROCS:-12}
@@ -55,13 +49,13 @@ run-all() {
 
   tests/regtest_spec.py \
     | head -n $max_cases \
-    | xargs -n 12 -P $NUM_PROCS --verbose -- $0 $func
+    | xargs -n $NUM_SPEC_COLS -P $NUM_PROCS --verbose -- $0 $func
 
   which tree >/dev/null && tree $REGTEST_DIR
 
-  # Now
+  # TODO: merge spec and metrics.  I guess use a simple Python script.
+  head $REGTEST_DIR/*/spec.txt
   head $REGTEST_DIR/*_report/metrics.csv
-  head $REGTEST_DIR/*/case_params.csv
 }
 
 # Run a single test case, specified by a line of the test spec.
@@ -74,18 +68,21 @@ _run-one-case() {
   local dist=$2
   local num_clients=$3
   local num_unique_values=$4
+  local values_per_client=$5
 
   # RAPPOR params
-  local num_bits=$5
-  local num_hashes=$6
-  local num_cohorts=$7
-  local p=$8
-  local q=$9
-  local f=${10}  # need curly braces to get 10th arg
+  local num_bits=$6
+  local num_hashes=$7
+  local num_cohorts=$8
+  local p=$9
+  local q=${10}
+  local f=${11}  # need curly braces to get 10th arg
 
   # map params
-  local num_additional=${11}
-  local to_remove=${12}
+  local num_additional=${12}
+  local to_remove=${13}
+
+  # NOTE: NUM_SPEC_COLS == 13
 
   local case_dir=$REGTEST_DIR/$test_case_id
   mkdir --verbose -p $case_dir
@@ -100,6 +97,7 @@ _run-one-case() {
     -e \
     -n $num_clients \
     -r $num_unique_values \
+    -c $values_per_client \
     -o $case_dir/case.csv
 
   # NOTE: Have to name inputs and outputs by the test case name

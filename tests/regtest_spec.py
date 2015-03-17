@@ -16,9 +16,8 @@ import sys
 # For gen_sim_input.py
 INPUT_PARAMS = {
     # distribution, num clients, num unique values
-    # TODO: get rid of magic 7
-    'e1': ('exp', 10000, 100),
-    'e2': ('exp', 100000, 100),
+    'e1': ('exp', 10000, 100, 5),
+    'e2': ('exp', 100000, 100, 7),
     }
 
 # For rappor_sim.py
