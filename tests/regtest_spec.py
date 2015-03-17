@@ -1,6 +1,10 @@
 #!/usr/bin/python
-"""
-rappor_regtest.py
+"""Print a test spec on stdout.
+
+Each line has parmaeters for a test case.  The regtest.sh shell script reads
+these lines and runs parallel processes.
+
+We use Python data structures so the test cases are easier to read and edit.
 """
 
 import sys
@@ -46,22 +50,11 @@ TEST_CASES = {
 
 
 def main(argv):
-  # analyze.R should write a CSV row in each dir
-  #
-  # _tmp/t1/metrics.csv
-  #
-  # And then you concatenate them all
-
-  # Reuse:
-  # - Reuse the same sim input
-  # - Reuse the same map file - rappor library can cache it
-
   rows = []
   for test_case, (input_name, rappor_name, map_name) in TEST_CASES.iteritems():
     input_params = INPUT_PARAMS[input_name]
     rappor_params = RAPPOR_PARAMS[rappor_name]
     map_params = MAP_PARAMS[map_name]
-    #print input_params, rappor_params
     row = tuple([test_case,]) + input_params + rappor_params + map_params
     rows.append(row)
 

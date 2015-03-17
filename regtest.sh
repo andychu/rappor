@@ -1,7 +1,28 @@
 #!/bin/bash
 #
+# Run end-to-end tests in parallel.
+#
 # Usage:
 #   ./regtest.sh <function name>
+
+# Examples:
+#
+# $ export NUM_PROCS=20  # 12 by default
+# $ ./regtest.sh run-all  # run all reg tests
+#
+# There will be CSV output.
+
+# Flow:
+#
+# analyze.R should write a CSV row in each dir
+#
+# _tmp/t1/metrics.csv
+#
+# And then you concatenate them all
+
+# TODO:
+# - Reuse the same sim input -- come up with naming scheme
+# - Reuse the same map file -- ditto, rappor library can cache it
 
 set -o nounset
 set -o pipefail
@@ -18,7 +39,7 @@ readonly REGTEST_DIR=_tmp/regtest
 export PYTHONPATH=$CLIENT_DIR
 
 # TODO: Get num cpus
-readonly NUM_PROCS=12
+readonly NUM_PROCS=${NUM_PROCS:-12}
 
 run-all() {
   mkdir --verbose -p $REGTEST_DIR
