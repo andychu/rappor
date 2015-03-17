@@ -42,6 +42,9 @@ export PYTHONPATH=$CLIENT_DIR
 readonly NUM_PROCS=${NUM_PROCS:-12}
 
 run-all() {
+  # Limit it to this number of test cases.  By default we run all of them.
+  local max_cases=${1:-1000000}
+
   mkdir --verbose -p $REGTEST_DIR
   # Print the spec
   #
@@ -51,6 +54,7 @@ run-all() {
   local func=_run-one-case  # parallel process output mixed on the console
 
   tests/regtest_spec.py \
+    | head -n $max_cases \
     | xargs -n 12 -P $NUM_PROCS --verbose -- $0 $func
 
   which tree >/dev/null && tree $REGTEST_DIR

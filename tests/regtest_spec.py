@@ -17,7 +17,7 @@ import sys
 INPUT_PARAMS = {
     # distribution, num clients, num unique values
     # TODO: get rid of magic 7
-    'e1': ('exp', 10000, 100),
+    'e1': ('exp', 100000, 100),
     'e2': ('exp', 100000, 100),
     }
 
@@ -33,17 +33,16 @@ MAP_PARAMS = {
     # 2. Candidate strings to remove from the map.  This FORCES false
     # negatives, e.g. for common strings, since a string has to be in the map
     # for RAPPOR to choose it.
-    'm1': (10, []),
+    'm1': (50, []),
     'm2': (10, ['v1', 'v2']),
     'm3': (50, ['v1', 'v2']),
     }
 
 # test case name -> (input params name, RAPPOR params name, map params name)
-TEST_CASES = {
-    # same parameters as the demo
-    'demo': ('e1', 'r1', 'm1'),
-    'chrome': ('e1', 'r1', 'm2'),
-    }
+TEST_CASES = [
+    ('demo', 'e1', 'r1', 'm1'),
+    ('chrome', 'e1', 'r1', 'm2'),
+    ]
 
 #
 # END TEST CONFIGURATION
@@ -52,7 +51,7 @@ TEST_CASES = {
 
 def main(argv):
   rows = []
-  for test_case, (input_name, rappor_name, map_name) in TEST_CASES.iteritems():
+  for test_case, input_name, rappor_name, map_name in TEST_CASES:
     input_params = INPUT_PARAMS[input_name]
     rappor_params = RAPPOR_PARAMS[rappor_name]
     map_params = MAP_PARAMS[map_name]
