@@ -175,6 +175,13 @@ WritePlot <- function(p, outdir, width = 800, height = 600) {
   Log('Wrote %s', filename)
 }
 
+WriteMetrics <- function(metrics, outdir) {
+  filename <- file.path(outdir, 'metrics.csv')
+  # TODO: Write the original params too
+  write.csv(metrics, file = filename, row.names = FALSE)
+  Log('Wrote %s', filename)
+}
+
 main <- function(parsed) {
   args <- parsed$args
   options <- parsed$options
@@ -193,6 +200,8 @@ main <- function(parsed) {
   LoadInputs(input_prefix, ctx)
   d <- ProcessAll(ctx)
   p <- PlotAll(d$plot_data, options$title)
+
+  WriteMetrics(d$metrics, output_dir)
   WritePlot(p, output_dir)
 }
 

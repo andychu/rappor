@@ -59,10 +59,8 @@ run-all() {
 
   which tree >/dev/null && tree $REGTEST_DIR
 
-  # After these are done in parallel
-  #
-  # Output summary
-  # Then cat _tmp/regtest/t*/metrics.csv
+  # Now
+  head $REGTEST_DIR/*_report/metrics.csv
 }
 
 # Run a single test case, specified by a line of the test spec.
@@ -70,10 +68,13 @@ run-all() {
 
 _run-one-case() {
   local test_case_id=$1
+
+  # input params
   local dist=$2
   local num_clients=$3
   local num_unique_values=$4
 
+  # RAPPOR params
   local num_bits=$5
   local num_hashes=$6
   local num_cohorts=$7
@@ -81,6 +82,7 @@ _run-one-case() {
   local q=$9
   local f=${10}  # need curly braces to get 10th arg
 
+  # map params
   local num_additional=${11}
   local to_remove=${12}
 
