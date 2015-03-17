@@ -139,6 +139,22 @@ show-help() {
   tests/rappor_sim.py -h || true
 }
 
+make-summary() {
+  local dir=$1
+
+  tests/make_summary.py $dir > $dir/rows.html
+
+  pushd $dir >/dev/null
+
+  cat ../../tests/regtest.html \
+    | sed -e '/TABLE_ROWS/ r rows.html' \
+    > results.html
+
+  popd >/dev/null
+
+  log "Wrote $dir/results.html"
+}
+
 run-all() {
   # Limit it to this number of test cases.  By default we run all of them.
   local max_cases=${1:-1000000}
@@ -163,7 +179,7 @@ run-all() {
 
   which tree >/dev/null && tree $REGTEST_DIR
 
-  tests/make_summary.py $REGTEST_DIR
+  make-summary $REGTEST_DIR
 }
 
 "$@"

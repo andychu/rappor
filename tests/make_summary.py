@@ -12,13 +12,13 @@ ROW = """\
 <tr>
   <td>
     %(name)s
-  <td>
+  </td>
   <td>
     %(spec)s
-  <td>
+  </td>
   <td>
     %(metrics)s
-  <td>
+  </td>
 </tr>
 """
 
