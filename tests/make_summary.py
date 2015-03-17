@@ -11,7 +11,7 @@ import sys
 ROW = """\
 <tr>
   <td>
-    %(name)s
+    <a href="#%(name)s">%(name)s</a>
   </td>
   <td>
     %(input)s
@@ -26,6 +26,17 @@ ROW = """\
     %(metrics)s
   </td>
 </tr>
+"""
+
+DETAILS = """\
+<p style="text-align: right">
+  <a href="#top">Up</a>
+</p>
+
+<a id="%(name)s"></a>
+<p style="text-align: center">
+  <img src="%(name)s_report/dist.png" />
+</p>
 """
 
 def main(argv):
@@ -57,13 +68,20 @@ def main(argv):
 
     data = {
         # See tests/regtest_spec.py for the definition of the spec row
-        'name': spec_row[0],
+        'name': case,
         'input': Piece(spec_row, 1, 5),
         'rappor': Piece(spec_row, 5, 11),
         'map': Piece(spec_row, 11, 13),
         'metrics': ' '.join(metrics_row),
         }
     print ROW % data
+
+  print '</table>'
+
+  # Plot links.
+  # TODO: Repeat params?
+  for case in test_cases:
+    print DETAILS % {'name': case}
 
 
 if __name__ == '__main__':
