@@ -72,9 +72,7 @@ def usage(script_name):
 
   sys.stdout.write("""
 
-  -u        Uniform distribution (default)
-  -g        Gaussian distribution
-  -e        Exponential distribution
+  -d        Distribution (exp, gauss, or unif)
   -n        Number of users (default = 100,000)
   -p        Parameter
             Ignored for uniform
@@ -155,7 +153,7 @@ def main(argv):
 
   # Get arguments
   try:
-      opts, args = getopt.getopt(argv[1:], "ugen:p:o:r:c:")
+    opts, args = getopt.getopt(argv[1:], "d:n:p:o:r:c:")
   except getopt.GetoptError:
     usage(argv[0])
     sys.exit(2)
@@ -166,12 +164,11 @@ def main(argv):
       OUTFILE = arg
     elif opt == "-r":
       NUM_UNIQUE_VALUES = int(arg)
-    elif opt == "-u":
-      DISTR = DISTR_UNIF
-    elif opt == "-g":
-      DISTR = DISTR_GAUSS
-    elif opt == "-e":
-      DISTR = DISTR_EXP
+    elif opt == "-d":
+      d = {'exp': DISTR_EXP, 'gauss': DISTR_GAUSS, 'unif': DISTR_UNIF}
+      DISTR = d.get(arg)
+      if not DISTR:
+        raise RuntimeError('Invalid distribution %r' % arg)
     elif opt == "-p":
       DIST_PARAM = float(arg)
     elif opt == "-n":
@@ -241,4 +238,9 @@ def main(argv):
 
 
 if __name__ == "__main__":
-  main(sys.argv)
+  try:
+    main(sys.argv)
+  except RuntimeError, e:
+    print >>sys.stderr, e.args[0]
+    sys.exit(1)
+
