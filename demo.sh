@@ -40,27 +40,13 @@ gen-sim-input-demo() {
   local num_clients=$2
   local num_unique_values=${3:-$NUM_UNIQUE_VALUES}
 
-  local flag=''
-  case $dist in
-    exp)
-      flag=-e
-      ;;
-    gauss)
-      flag=-g
-      ;;
-    unif)
-      flag=-u
-      ;;
-    *)
-      die "Invalid distribution '$dist'"
-  esac
-
   mkdir -p _tmp
 
   # Simulating 10,000 clients runs reasonably fast but the results look poor.
   # 100,000 is slow but looks better.
   # 50 different client values are easier to plot (default is 100)
-  time tests/gen_sim_input.py $flag \
+  time tests/gen_sim_input.py \
+    -d $dist \
     -n $num_clients \
     -r $num_unique_values \
     -o _tmp/$dist.csv

@@ -73,7 +73,7 @@ _run-one-case() {
   banner "Generating input"
 
   tests/gen_sim_input.py \
-    -e \
+    -d $dist \
     -n $num_clients \
     -r $num_unique_values \
     -c $values_per_client \
