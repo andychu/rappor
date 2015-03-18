@@ -144,7 +144,6 @@ ProcessAll = function(ctx) {
       num_false_pos = nrow(false_pos),
       num_false_neg = nrow(false_neg),
       l1 = l1,
-      sum_estimate = sum(rappor$estimate),
       sum_proportion = sum(rappor$proportion)
       )
 
