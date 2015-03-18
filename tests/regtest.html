@@ -7,10 +7,11 @@
     p { margin: 0 auto; width: 80%; text-align: center }
 
     table { width: 100%; border-spacing: 0 }
-    thead { text-align: center; font-weight: bold }
-    tbody td { text-align: right }
+    .tophead { text-align: center; font-weight: bold }
+    .explain { text-align: left; font-weight: normal }
     .subhead { text-align: right; font-weight: bold }
     .highlight { background-color: #eeeeee }
+    tbody td { text-align: right }
   </style>
 </head>
 
@@ -30,7 +31,7 @@
     </colgroup>
 
     <thead>
-      <tr>
+      <tr class="tophead">
         <td>
           Test Case
         </td>
@@ -47,10 +48,34 @@
           Result Metrics
         </td>
       </tr>
-    </thead>
 
-    <tbody>
-      <!-- not part of thead -->
+      <tr class="explain">
+        <td></td>
+        <td colspan=4>
+          d: distribution drawn from<br/>
+          c: clients<br/>
+          u: total unique values<br/>
+          v: values per client<br/>
+        </td>
+        <td colspan=6>
+          k: report bits<br/>
+          h: hashes<br/>
+          m: cohorts<br/>
+          p, q, f: probabilities<br/>
+        </td>
+        <td colspan=2>
+          +: number added to true values<br/>
+          -: regex for values removed<br/>
+        </td>
+        <td colspan=6>
+          a: actual values<br/>
+          r: values RAPPOR detected<br/>
+          fp: false positives<br/>
+          fn: false negatives<br/>
+          se: sum(estimates)<br/>
+        </td>
+      </tr>
+
       <tr class="subhead">
         <td></td>
 
@@ -76,7 +101,9 @@
         <td>L1</td>
         <td>sp</td>
       </tr>
+    </thead>
 
+    <tbody>
   <!-- TABLE_ROWS -->
 
 </body>
