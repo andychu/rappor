@@ -13,18 +13,7 @@ ROW = """\
   <td>
     <a href="#%(name)s">%(name)s</a>
   </td>
-  <td>
-    %(input)s
-  </td>
-  <td>
-    %(rappor)s
-  </td>
-  <td>
-    %(map)s
-  </td>
-  <td>
-    %(metrics)s
-  </td>
+  %(cell_html)s
 </tr>
 """
 
@@ -63,20 +52,19 @@ def main(argv):
 
     #print metrics_row
 
-    def Piece(s, begin, end):
-      return ' '.join(s[begin : end])
+    row = spec_row[1:13] + metrics_row
+    cell_html = ' '.join('<td>%s</td>' % cell for cell in row)
 
     data = {
         # See tests/regtest_spec.py for the definition of the spec row
         'name': case,
-        'input': Piece(spec_row, 1, 5),
-        'rappor': Piece(spec_row, 5, 11),
-        'map': Piece(spec_row, 11, 13),
-        'metrics': ' '.join(metrics_row),
+        'cell_html': cell_html,
         }
     print ROW % data
 
+  print '</tbody>'
   print '</table>'
+  print '<hr />'
 
   # Plot links.
   # TODO: Repeat params?
