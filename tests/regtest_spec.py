@@ -54,7 +54,7 @@ def main(argv):
     input_params = INPUT_PARAMS[input_name]
     rappor_params = RAPPOR_PARAMS[rappor_name]
     map_params = MAP_PARAMS[map_name]
-    row = tuple([test_case,]) + input_params + rappor_params + map_params
+    row = tuple([test_case]) + input_params + rappor_params + map_params
     rows.append(row)
 
   for row in rows:
